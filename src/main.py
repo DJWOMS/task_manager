@@ -3,19 +3,10 @@ from uuid import UUID
 
 import uvicorn
 from litestar import Litestar
-from litestar.contrib.repository import FilterTypes
-from litestar.contrib.repository.exceptions import RepositoryError as RepositoryException
-from litestar.contrib.repository.filters import (
-    BeforeAfter,
-    CollectionFilter,
-    LimitOffset,
-    OrderBy,
-    SearchFilter,
-)
-from litestar.stores.registry import StoreRegistry
+from litestar.exceptions import NotFoundException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from app.controllers import create_router
+from src.api import create_router
 from src.app.config import (
     cors,
     db,
@@ -24,39 +15,26 @@ from src.app.config import (
     openapi,
     project,
     security,
+    sqlalchemy_plugin,
 )
 
 __all__ = ["create_app"]
 
-
-# dependencies = create_collection_dependencies()
+from src.exception_handlers import not_found_exception_handler
+from src.exceptions import NotFoundError
 
 
 def create_app(**kwargs: Any) -> Litestar:
     kwargs.setdefault("debug", project.server.debug)
 
     return Litestar(
-        # response_cache_config=cache.config,
-        # dependencies=dependencies,
-        # exception_handlers={
-        #     RepositoryException: exceptions.repository_exception_to_http_response,  # type: ignore[dict-item]
-        #     ServiceError: exceptions.service_exception_to_http_response,  # type: ignore[dict-item]
-        # },
-        # logging_config=logging.settings.log_config,
-        # openapi_config=openapi.settings.config,
-        # route_handlers=[health_check, create_router()],
-        # on_shutdown=[redis.close],
-        # on_startup=[sentry.configure],
-        # plugins=[sqlalchemy_plugin.plugin],
+        route_handlers=[create_router()],
+        plugins=[sqlalchemy_plugin.plugin],
         signature_namespace={
             "AsyncSession": AsyncSession,
-            # "FilterTypes": FilterTypes,
-            # "BeforeAfter": BeforeAfter,
-            # "CollectionFilter": CollectionFilter,
-            # "LimitOffset": LimitOffset,
-            # "UUID": UUID,
-            # "OrderBy": OrderBy,
-            # "SearchFilter": SearchFilter,
+        },
+        exception_handlers={
+            NotFoundError: not_found_exception_handler
         },
         **kwargs,
     )

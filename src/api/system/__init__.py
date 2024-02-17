@@ -1,9 +1,9 @@
-from litestar import Router, get
+from litestar import Router
+
+from .healthcheck_controller import healthcheck
 
 
-@get("/healthcheck")
-async def healthcheck() -> dict[str, str]:
-    return {"health": "OK"}
+__all__ = ["health_check"]
 
 
-system_routes = Router(path="/system", route_handlers=[healthcheck])
+health_check = Router(path="/system", route_handlers=[healthcheck], tags=["system"])

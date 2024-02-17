@@ -1,5 +1,5 @@
 from uuid import uuid4
-from litestar import Controller, post, get, put, patch, delete
+from litestar import Controller, post, get, put, patch, delete, Router
 from litestar.dto import DataclassDTO, DTOConfig, DTOData
 from pydantic import UUID4
 
@@ -31,13 +31,11 @@ class UserController(Controller):
     ) -> User:
         return User(**data.__dict__, id=user_id)
 
+    @put(path="/{user_id:uuid}")
+    async def update_user(self, user_id: UUID4, data: User) -> User: ...
+
+    @delete(path="/{user_id:uuid}")
+    async def delete_user(self, user_id: UUID4) -> None: ...
 
 
-
-
-
-    # @put(path="/{user_id:uuid}")
-    # async def update_user(self, user_id: UUID4, data: User) -> User: ...
-    #
-    # @delete(path="/{user_id:uuid}")
-    # async def delete_user(self, user_id: UUID4) -> None: ...
+user = Router(path="/", route_handlers=[UserController], tags=["user"])
