@@ -3,7 +3,7 @@
 # - runs Alembic migrations
 # - starts Litestar application
 
-MIGRATIONS_PATH="../migrations/versions"
+MIGRATIONS_PATH="migrations/versions"
 
 if [ "$DB_RUN_AUTO_MIGRATE" = "True" ]; then
   if [ -d "$MIGRATIONS_PATH" ] && [ "$(ls -A $MIGRATIONS_PATH)" ]; then
