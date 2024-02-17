@@ -1,0 +1,44 @@
+version: "3.9"
+x-pg_settings: &pg_settings
+  POSTGRES_HOST: pg
+  POSTGRES_PORT: 5432
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: djwoms_development
+  POSTGRES_POOL: 10
+
+x-app: &default-app
+  build: .
+  restart: always
+
+x-env: &env
+  env_file:
+    - .env
+
+services:
+  api:
+    <<: [*default-app, *env]
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    depends_on:
+      pg:
+        condition: service_healthy
+
+  pg:
+    environment:
+      <<: *pg_settings
+    image: postgres:15.3-alpine
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: pg_isready -d "$${POSTGRES_DB}" -U "$${POSTGRES_USER}"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
