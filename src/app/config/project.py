@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     reload: bool = True
     keepalive: int = 65
     use_colors: bool = True
+    api_db_session_dependency_key: str = Field(
+        default="db_session", alias="API_DB_SESSION_DEPENDENCY_KEY"
+    )
     # hooks_enabled: bool = Field(default=True, alias="APP_HOOKS_ENABLED")
     # root_path: str = Field(default="", alias="APP_ROOT_PATH")
     # timezone_shift: int = Field(default=3, alias="APP_TIMEZONE_SHIFT")

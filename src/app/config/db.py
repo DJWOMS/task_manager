@@ -10,6 +10,11 @@ class DatabaseSettings(BaseSettings):
     db_user: str = Field(..., alias="DB_USER")
     db_password: str = Field(..., alias="DB_PASSWORD")
     db_echo_log: bool = Field(False, alias="DB_ECHO_LOG")
+    db_echo_pool: bool = Field(False, alias="DB_ECHO_POOL")
+    db_pool_max_overflow: int = Field(10, alias="DB_POOL_MAX_OVERFLOW")
+    db_pool_size: int = Field(5, alias="DB_POOL_SIZE")
+    db_pool_timeout: int = Field(30, alias="DB_POOL_TIMEOUT")
+    db_pool_disable: bool = Field(False, alias="DB_POOL_DISABLE")
 
     @property
     def database_url(self) -> PostgresDsn:
